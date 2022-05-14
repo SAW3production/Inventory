@@ -23,7 +23,7 @@ public class Apple : IInventoryItem
         return new Apple(maxItemsInInventorySlot)
         {
             amount = this.amount
-        }
+        };
     }
 
 }
