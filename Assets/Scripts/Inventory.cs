@@ -1,9 +1,12 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using UnityEngine;
 
 public class Inventory : IInventory
 {
+    public event Action<object, IInventoryItem, int> OnInventoryItemAddedEvent;
+    public event Action<object, Type, int> OnInventoryItemRemovedEvent;
     public int capacity { get; set; }
 
     public bool isFull => _slots.All(slot => slot.isFull);
@@ -77,12 +80,51 @@ public class Inventory : IInventory
 
     public bool HasItem(Type itemType, out IInventoryItem item)
     {
-        throw new NotImplementedException();
+        item = GetItem(itemType);
+        return item != null;
     }
 
     public void Remove(object sender, Type itemType, int amount = 1)
     {
-        throw new NotImplementedException();
+        var slotsWithitem = GetAllSlots(itemType);
+        if (slotsWithitem.Length == 0)
+            return;
+        var amountToRemove = amount;
+
+        var count = slotsWithitem.Length;
+
+        for (int i = count - 1; i >= 0; i--)
+        {
+            var slot = slotsWithitem[i];
+            if (slot.amount >= amountToRemove)
+            {
+                slot.item.amount -= amountToRemove;
+                if (slot.amount <= 0)
+                    slot.Clear();
+                Debug.Log($"Item removed . itemType: {itemType}, amount: {amountToRemove}");
+                OnInventoryItemRemovedEvent?.Invoke(sender, itemType, amountToRemove);
+                break;
+            }
+            var amountRemoved = slot.amount;
+            amountToRemove -= slot.amount;
+            slot.Clear();
+            Debug.Log($"Item removed . itemType: {itemType}, amount: {amountRemoved}");
+            OnInventoryItemRemovedEvent?.Invoke(sender, itemType, amountRemoved);
+
+
+
+
+        }
+
+    }
+
+    public  IInventorySlot[] GetAllSlots(Type itemType)
+    {
+        return _slots.FindAll(slot => !slot.isEmpty && slot.itemType == itemType).ToArray();
+    }
+    public  IInventorySlot[] GetAllSlots()
+    {
+        return _slots.ToArray();
     }
 
     public bool TryToAdd(object sender, IInventoryItem item)
@@ -100,6 +142,25 @@ public class Inventory : IInventory
     }
     private bool TryToAddToSlot(object sender, IInventorySlot slot, IInventoryItem item)
     {
+        var fits = slot.amount + item.amount <= item.maxItemsInInventorySlot;
+        var amountToAdd = fits ? item.amount : item.maxItemsInInventorySlot - slot.amount;
+        var amountLeft = item.amount - amountToAdd;
+        var clonedItem = item.Clone();
+        clonedItem.amount = amountToAdd;
+        if (slot.isEmpty)
+            slot.SetItem(clonedItem);
+        else
+            slot.item.amount += amountToAdd;
+        Debug.Log($"Item added to inventory. itemType: {item.type}, amount: {amountToAdd}");
+        OnInventoryItemAddedEvent?.Invoke(sender, item, amountToAdd);
+
+        if (amountLeft <= 0)
+            return true;
+
+        item.amount = amountLeft;
+
+        return TryToAdd(sender, item);
 
     }
+
 }
