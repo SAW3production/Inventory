@@ -57,7 +57,7 @@ public class Inventory : IInventory
         var equippedItems = new List<IInventoryItem>();
         foreach (var slot in requiredSlots)
         {
-            equippedItems.Add(slot.item)
+            equippedItems.Add(slot.item);
         }
         return equippedItems.ToArray();
     }
