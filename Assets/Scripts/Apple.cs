@@ -5,25 +5,23 @@ using UnityEngine;
 
 public class Apple : IInventoryItem
 {
-    public bool isEquipeed { get ; set; }
 
     public Type type => GetType();
 
-    public int maxItemsInInventorySlot { get; } 
+    public IInventoryItemInfo info { get; }
 
-    public int amount { get ; set; }
+    public IInventoryItemState state { get; }
 
-
-    public Apple(int maxItemsInInventorySlot)
+    public Apple(IInventoryItemInfo info)
     {
-        this.maxItemsInInventorySlot = maxItemsInInventorySlot;
+        this.info = info;
+        state = new InventoryItemState();
     }
     public IInventoryItem Clone()
     {
-        return new Apple(maxItemsInInventorySlot)
-        {
-            amount = this.amount
-        };
+        var clonedApple = new Apple(info);
+        clonedApple.state.amount = state.amount;
+        return clonedApple;
     }
 
 }

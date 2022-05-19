@@ -53,7 +53,7 @@ public class Inventory : IInventory
 
     public IInventoryItem[] GetEquippedItems()
     {
-        var requiredSlots = _slots.FindAll(slot => slot.item.isEquipeed);
+        var requiredSlots = _slots.FindAll(slot => slot.item.state.isEquipped);
         var equippedItems = new List<IInventoryItem>();
         foreach (var slot in requiredSlots)
         {
@@ -73,7 +73,7 @@ public class Inventory : IInventory
         var allItems = GetAllItems(itemType);
         foreach (var item in allItems)
         {
-            amount += item.amount;
+            amount += item.state.amount;
         }
         return amount;
     }
@@ -98,7 +98,7 @@ public class Inventory : IInventory
             var slot = slotsWithitem[i];
             if (slot.amount >= amountToRemove)
             {
-                slot.item.amount -= amountToRemove;
+                slot.item.state.amount -= amountToRemove;
                 if (slot.amount <= 0)
                     slot.Clear();
                 Debug.Log($"Item removed . itemType: {itemType}, amount: {amountToRemove}");
@@ -142,22 +142,22 @@ public class Inventory : IInventory
     }
     private bool TryToAddToSlot(object sender, IInventorySlot slot, IInventoryItem item)
     {
-        var fits = slot.amount + item.amount <= item.maxItemsInInventorySlot;
-        var amountToAdd = fits ? item.amount : item.maxItemsInInventorySlot - slot.amount;
-        var amountLeft = item.amount - amountToAdd;
+        var fits = slot.amount + item.state.amount <= item.info.maxItemsInInventorySlot;
+        var amountToAdd = fits ? item.state.amount : item.info.maxItemsInInventorySlot - slot.amount;
+        var amountLeft = item.state.amount - amountToAdd;
         var clonedItem = item.Clone();
-        clonedItem.amount = amountToAdd;
+        clonedItem.state.amount = amountToAdd;
         if (slot.isEmpty)
             slot.SetItem(clonedItem);
         else
-            slot.item.amount += amountToAdd;
+            slot.item.state.amount += amountToAdd;
         Debug.Log($"Item added to inventory. itemType: {item.type}, amount: {amountToAdd}");
         OnInventoryItemAddedEvent?.Invoke(sender, item, amountToAdd);
 
         if (amountLeft <= 0)
             return true;
 
-        item.amount = amountLeft;
+        item.state.amount = amountLeft;
 
         return TryToAdd(sender, item);
 

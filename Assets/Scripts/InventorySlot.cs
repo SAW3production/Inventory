@@ -11,7 +11,7 @@ public class InventorySlot : IInventorySlot
 
     public Type itemType => item.type;
 
-    public int amount => isEmpty ? 0 : item.amount;
+    public int amount => isEmpty ? 0 : item.state.amount;
 
     public int capacity { get; private set; }
 
@@ -19,7 +19,7 @@ public class InventorySlot : IInventorySlot
     {
         if (!isEmpty)
             return;
-        item.amount = 0;
+        item.state.amount = 0;
         item = null;
     }
 
@@ -30,7 +30,7 @@ public class InventorySlot : IInventorySlot
             return;
         }
         this.item = item;
-        this.capacity = item.maxItemsInInventorySlot;
+        this.capacity = item.info.maxItemsInInventorySlot;
 
     }
 }
