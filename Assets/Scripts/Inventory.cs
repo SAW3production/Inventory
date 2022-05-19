@@ -7,6 +7,7 @@ public class Inventory : IInventory
 {
     public event Action<object, IInventoryItem, int> OnInventoryItemAddedEvent;
     public event Action<object, Type, int> OnInventoryItemRemovedEvent;
+    public event Action<object> OnInventoryStateChangedEvent;
     public int capacity { get; set; }
 
     public bool isFull => _slots.All(slot => slot.isFull);
@@ -103,6 +104,7 @@ public class Inventory : IInventory
                     slot.Clear();
                 Debug.Log($"Item removed . itemType: {itemType}, amount: {amountToRemove}");
                 OnInventoryItemRemovedEvent?.Invoke(sender, itemType, amountToRemove);
+                OnInventoryStateChangedEvent?.Invoke(sender);
                 break;
             }
             var amountRemoved = slot.amount;
@@ -110,6 +112,7 @@ public class Inventory : IInventory
             slot.Clear();
             Debug.Log($"Item removed . itemType: {itemType}, amount: {amountRemoved}");
             OnInventoryItemRemovedEvent?.Invoke(sender, itemType, amountRemoved);
+            OnInventoryStateChangedEvent?.Invoke(sender);
 
 
 
@@ -153,6 +156,7 @@ public class Inventory : IInventory
             slot.item.state.amount += amountToAdd;
         Debug.Log($"Item added to inventory. itemType: {item.type}, amount: {amountToAdd}");
         OnInventoryItemAddedEvent?.Invoke(sender, item, amountToAdd);
+        OnInventoryStateChangedEvent?.Invoke(sender);
 
         if (amountLeft <= 0)
             return true;
@@ -160,6 +164,40 @@ public class Inventory : IInventory
         item.state.amount = amountLeft;
 
         return TryToAdd(sender, item);
+
+    }
+
+    public void TransitFromSlotToSlot(object sender, IInventorySlot fromSlot, IInventorySlot toSlot)
+    {
+        if (fromSlot.isEmpty)
+            return;
+        if (toSlot.isFull)
+            return;
+        if (!toSlot.isEmpty && fromSlot.itemType != toSlot.itemType)
+            return;
+
+        var slotCapacity = fromSlot.capacity;
+        var fits = fromSlot.amount + toSlot.amount <= slotCapacity;
+        var amountToAdd = fits ? fromSlot.amount : slotCapacity - toSlot.amount;
+        var amountLeft = fromSlot.amount - amountToAdd;
+
+        if (toSlot.isEmpty)
+        {
+            toSlot.SetItem(fromSlot.item);
+            fromSlot.Clear();
+            OnInventoryStateChangedEvent?.Invoke(sender);
+
+        }
+        toSlot.item.state.amount += amountToAdd;
+        if (fits)
+        {
+            fromSlot.Clear();
+        }
+        else
+        {
+            fromSlot.item.state.amount = amountLeft;
+        }
+        OnInventoryStateChangedEvent?.Invoke(sender);
 
     }
 
