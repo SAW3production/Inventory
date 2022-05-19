@@ -1,18 +1,26 @@
+using System;
 using System.Collections;
 using System.Collections.Generic;
 using UnityEngine;
 
-public class Chocolate : MonoBehaviour
+public class Chocolate : IInventoryItem
 {
-    // Start is called before the first frame update
-    void Start()
+    public Type type => GetType();
+
+    public IInventoryItemInfo info { get; }
+
+    public IInventoryItemState state { get; }
+
+    public Chocolate(IInventoryItemInfo info)
     {
-        
+        this.info = info;
+        state = new InventoryItemState();
+    }
+    public IInventoryItem Clone()
+    {
+        var clonedChocolate = new Apple(info);
+        clonedChocolate.state.amount = state.amount;
+        return clonedChocolate;
     }
 
-    // Update is called once per frame
-    void Update()
-    {
-        
-    }
 }
