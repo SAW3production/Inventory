@@ -3,7 +3,7 @@ using System;
 
 public class InventorySlot : IInventorySlot
 {
-    public bool isFull => amount == capacity;
+    public bool isFull => !isEmpty && amount == capacity;
 
     public bool isEmpty => item == null;
 

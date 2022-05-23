@@ -4,11 +4,17 @@ using UnityEngine;
 
 public class UIInventory : MonoBehaviour
 {
-    public Inventory inventory { get; private set; }
+    [SerializeField] InventoryItemInfo _appleInfo;
+    [SerializeField] InventoryItemInfo _chocolateInfo;
+    public Inventory inventory => tester.inventory;
+    private UITester tester;
 
-    private void Awake()
+    private void Start()
     {
-        inventory = new Inventory(18);
+        var uiSlots = GetComponentsInChildren<UIInventorySlot>();
+        tester = new UITester(_appleInfo,_chocolateInfo,uiSlots);
+        tester.FillSlots(7);
+        
 
     }
 

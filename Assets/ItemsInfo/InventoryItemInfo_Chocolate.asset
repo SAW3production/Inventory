@@ -10,10 +10,10 @@ MonoBehaviour:
   m_Enabled: 1
   m_EditorHideFlags: 0
   m_Script: {fileID: 11500000, guid: 747a90f9aa7d0904fb3a94ca721f240c, type: 3}
-  m_Name: InventoryItemInfo
+  m_Name: InventoryItemInfo_Chocolate
   m_EditorClassIdentifier: 
-  _id: apple
-  _title: Apple
-  _discription: Sweet apple
-  _maxItemsInInventorySlot: 5
-  _spriteIcon: {fileID: 21300000, guid: ee5a5097edf79224bae94d4d77e4a0e3, type: 3}
+  _id: chocolate
+  _title: Chocolate
+  _discription: Brown chocolate
+  _maxItemsInInventorySlot: 3
+  _spriteIcon: {fileID: 21300000, guid: 6fdf2efd6fb5c054898d26f05bf71827, type: 3}

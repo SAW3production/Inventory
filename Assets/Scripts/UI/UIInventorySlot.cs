@@ -31,7 +31,7 @@ public class UIInventorySlot : UISlot
         
     }
 
-    private void Refresh()
+    public void Refresh()
     {
         if(slot != null)
         {

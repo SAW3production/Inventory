@@ -143,7 +143,7 @@ public class Inventory : IInventory
         return false;
 
     }
-    private bool TryToAddToSlot(object sender, IInventorySlot slot, IInventoryItem item)
+    public bool TryToAddToSlot(object sender, IInventorySlot slot, IInventoryItem item)
     {
         var fits = slot.amount + item.state.amount <= item.info.maxItemsInInventorySlot;
         var amountToAdd = fits ? item.state.amount : item.info.maxItemsInInventorySlot - slot.amount;
@@ -174,6 +174,8 @@ public class Inventory : IInventory
         if (toSlot.isFull)
             return;
         if (!toSlot.isEmpty && fromSlot.itemType != toSlot.itemType)
+            return;
+        if (fromSlot == toSlot)
             return;
 
         var slotCapacity = fromSlot.capacity;
