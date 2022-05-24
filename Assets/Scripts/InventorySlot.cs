@@ -17,10 +17,12 @@ public class InventorySlot : IInventorySlot
 
     public void Clear()
     {
-        if (!isEmpty)
+        if (isEmpty)
             return;
         item.state.amount = 0;
         item = null;
+        
+        
     }
 
     public void SetItem(IInventoryItem item)

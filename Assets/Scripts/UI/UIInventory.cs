@@ -13,7 +13,7 @@ public class UIInventory : MonoBehaviour
     {
         var uiSlots = GetComponentsInChildren<UIInventorySlot>();
         tester = new UITester(_appleInfo,_chocolateInfo,uiSlots);
-        tester.FillSlots(7);
+        tester.FillSlots(3);
         
 
     }

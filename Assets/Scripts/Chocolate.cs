@@ -18,7 +18,7 @@ public class Chocolate : IInventoryItem
     }
     public IInventoryItem Clone()
     {
-        var clonedChocolate = new Apple(info);
+        var clonedChocolate = new Chocolate(info);
         clonedChocolate.state.amount = state.amount;
         return clonedChocolate;
     }

@@ -175,6 +175,7 @@ public class Inventory : IInventory
             return;
         if (!toSlot.isEmpty && fromSlot.itemType != toSlot.itemType)
             return;
+        
         if (fromSlot == toSlot)
             return;
 
@@ -188,6 +189,7 @@ public class Inventory : IInventory
             toSlot.SetItem(fromSlot.item);
             fromSlot.Clear();
             OnInventoryStateChangedEvent?.Invoke(sender);
+            
 
         }
         toSlot.item.state.amount += amountToAdd;
